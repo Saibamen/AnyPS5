@@ -33,11 +33,8 @@ jobs:
           - platform: windows
             runner: windows-latest
             timeout: 45
-            ssl_cert_file: 'C:\Program Files\Git\mingw64\etc\ssl\certs\ca-bundle.crt'
     runs-on: ${{ matrix.runner }}
     timeout-minutes: ${{ matrix.timeout }}
-    env:
-      SSL_CERT_FILE: ${{ matrix.ssl_cert_file }}
     defaults:
       run:
         shell: bash
@@ -52,6 +49,8 @@ jobs:
           path: C:\winlibs
           key: ${{ env.WINLIBS_ZIP }}
       - if: matrix.platform == 'windows' && steps.toolchain.outputs.cache-hit != 'true'
+        env:
+          SSL_CERT_FILE: 'C:\Program Files\Git\mingw64\etc\ssl\certs\ca-bundle.crt'
         run: |
           curl -sSfL -o "$RUNNER_TEMP/winlibs.zip" "https://github.com/brechtsanders/winlibs_mingw/releases/download/$WINLIBS_RELEASE/$WINLIBS_ZIP"
           7z x "$RUNNER_TEMP/winlibs.zip" -oC:/winlibs
@@ -70,6 +69,8 @@ jobs:
       - name: Configure Windows
         if: matrix.platform == 'windows'
         shell: cmd
+        env:
+          SSL_CERT_FILE: 'C:\Program Files\Git\mingw64\etc\ssl\certs\ca-bundle.crt'
         run: cmake -S . -B build %CONFIGURE%
       - name: Build project and tests (Linux)
         if: matrix.platform == 'linux'
