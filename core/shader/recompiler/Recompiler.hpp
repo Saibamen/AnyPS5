@@ -164,6 +164,10 @@ struct ShaderFloatMode {
     bool operator==(const ShaderFloatMode&) const = default;
 };
 
+inline constexpr std::uint32_t InterpolationQuiet = 1u;
+inline constexpr std::uint32_t InterpolationFlush32 = 2u;
+inline constexpr std::uint32_t InterpolationFlush16 = 4u;
+
 struct GuestContext {
     std::uint32_t waveSize;
     std::uint32_t userDataBaseRegister;
@@ -458,6 +462,7 @@ struct ShaderInvocation {
     std::vector<DescriptorBinding> bindings;
     std::vector<std::byte> pushConstants;
     std::vector<VertexAttribute> vertexAttributes;
+    std::uint32_t poisonedSrtReads = 0;
 };
 
 struct RecompileResult : CompiledShaderArtifact, ShaderInvocation {
